@@ -1,0 +1,11 @@
+default:
+  dbtype: 'postgresql'
+  dbhost: 'localhost'
+  dbport: 5432
+  dbuser: 'postgres'
+  dbname: 'postgres'
+  dbpass: 'hello1234'
+  schema: 'public'
+  apitype: 'wss'
+  dst_table: ''
+  proxy: ''

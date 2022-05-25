@@ -1,0 +1,14 @@
+default:
+  name: 'binance_fut_aggtrade'
+  exchange: 'binance'
+  api: 'fstream.binance.com/stream'
+  subscribe:  >
+    {
+        "method": "SUBSCRIBE",
+        "params":
+                [ "btcusdt@aggTrade", "ethusdt@aggTrade"],
+        "id": 1
+    }
+
+  dst_talbe: 'binance_fut_aggtrade'
+

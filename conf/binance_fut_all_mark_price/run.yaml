@@ -1,0 +1,21 @@
+default:
+  name: 'binance_fut_mark_price'
+  exchange: 'binance'
+  api: 'fstream.binance.com/stream'
+  subscribe:  >
+    {
+        "method": "SUBSCRIBE",
+        "params":
+                [ "!markPrice@arr@1s" ],
+        "id": 1
+    }
+
+  dst_table: 'binance_fut_all_mark_price'
+  ins_sub_query: >
+    to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
+    o->>'s' as "Symbol",
+    (o->>'p')::float as "MarkPrice",
+    (o->>'P')::float as "IndexPrice",
+    (o->>'i')::float as "EstSettlePrice",
+    (o->>'r')::float  as "FundingRate",
+    to_timestamp((o->>'T')::bigint/1000)  as "NextFundingTime"
