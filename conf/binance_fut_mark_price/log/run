@@ -1,0 +1,4 @@
+#!/bin/sh
+mkdir -p ./main
+chown -R postgres ./main
+exec setuidgid postgres multilog t I s200000 n5 ./main

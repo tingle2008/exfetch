@@ -1,5 +1,4 @@
-create table public.binance_fut_all_mark_price( id SERIAL,
-                                    	 "EventTime" timestamp,
+create table public.binance_fut_all_mark_price( "EventTime" timestamp,
                                     	 "Symbol" varchar(16),
                                     	 "MarkPrice" double precision,
                                     	 "IndexPrice" double precision,
@@ -23,9 +22,10 @@ $$ partition of public.binance_fut_all_mark_price  for values from ('$$ ||
            date(date(zz) + interval '1day') ||
                                       $$');$$
     from
-    generate_series(date_trunc('day',to_date('20220522','yyyymmdd')),
-	 	    date_trunc('day',to_date('20220601','yyyymmdd')),'1 day') as tt(zz);
+    generate_series(date_trunc('day',to_date('20220602','yyyymmdd')),
+	 	    date_trunc('day',to_date('20220605','yyyymmdd')),'1 day') as tt(zz);
 
-create index binance_fut_all_mark_price_idx on binance_fut_all_mark_price(id);
+\gexec
+
 create index binance_fut_all_mark_price_etx on binance_fut_all_mark_price using brin("EventTime")
 
