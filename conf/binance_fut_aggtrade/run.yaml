@@ -10,5 +10,15 @@ default:
         "id": 1
     }
 
-  dst_talbe: 'binance_fut_aggtrade'
+  dst_table: 'binance_fut_aggtrade'
+  ins_sub_query: >
+    to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
+    o->>'s' as "Symbol",
+    (o->>'a')::bigint as "AggTradeId",
+    (o->>'p')::float as "Price",
+    (o->>'q')::float as "Quantity",
+    (o->>'f')::bigint as "FirstTid",
+    (o->>'l')::bigint as "LastTid",
+    to_timestamp((o->>'T')::bigint/1000)  as "TradeTime",
+    (o->>'m')::bool  as "BMM"
 
