@@ -11,3 +11,4 @@ convert json out to postgresql dsl
 ./json_dsl.py  data.out  --data data  --table binance_fut_all_mark_price
 
 
+## 
