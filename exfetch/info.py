@@ -23,7 +23,7 @@ class Info():
         table = {}
 
 
-        for yaml_conf in [ self.confdir + "/default_dev.yaml", self.directory + "/run.yaml" ]:
+        for yaml_conf in [ self.directory + "/run.yaml", self.confdir + "/default_dev.yaml" ]:
             if not exists(yaml_conf):
                 continue
 
@@ -35,28 +35,21 @@ class Info():
 
             #XXX log info:
             print("LOADING", yaml_conf)
+            if re.search('(default\.yaml|default_dev\.yaml)',yaml_conf):
+                for t1_key in data.keys():
+                    for df_key in table.keys():
+                        if df_key not in data[t1_key]:
+                            data[t1_key][df_key] = table[df_key]
+            else:
+                for t1_key in table.keys():
+                    if t1_key in data:
+                        data[t1_key] = data[t1_key]
+                    else:
+                        data[t1_key] = {}
 
-            for t1_key in table.keys():
-                if t1_key in data:
-                    data[t1_key] = data[t1_key]
-                else:
-                    data[t1_key] = {}
-
-                for t2_key in table[t1_key].keys():
-                    data[t1_key][t2_key] = table[t1_key][t2_key]
+                    for t2_key in table[t1_key].keys():
+                        data[t1_key][t2_key] = table[t1_key][t2_key]
 
         dirname = self.directory.split(os.sep)[-1]
-        print(dirname)
-        if dirname != '.' and dirname != '':
-            if 'name' not in data['default']:
-                data['default']['name'] = dirname
-
-        finaldata = {}
-        for key in data['default']:
-            finaldata[key] = data['default'][key]
-        pp.pprint(finaldata)
-        self.data = finaldata
-
-
-
-
+        #pp.pprint(data)
+        self.data = data.copy()

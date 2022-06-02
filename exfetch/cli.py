@@ -1,5 +1,6 @@
-from .exfetch import ExFetch
+from .exfetch_engine import ExFetch
 from .utils import whoami
+import asyncio
 import click
 
 @click.command()

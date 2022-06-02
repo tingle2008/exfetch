@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/yuting/exfetch/.venv/local/bin/python
 import json,sys
 import time
 import click

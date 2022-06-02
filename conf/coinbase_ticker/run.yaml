@@ -1,0 +1,19 @@
+coinbase_ticker:
+  api: 'wss://ws-feed.exchange.coinbase.com'
+  subscribe: >
+    {
+    "type": "subscribe",
+    "product_ids": [
+        "BTC-USD",
+        "ETH-USD"
+    ],
+    "channels": [
+        {   
+            "name": "ticker",
+            "product_ids": [
+                "BTC-USD",
+                "ETH-USD"
+            ]
+        }
+    ]
+    }

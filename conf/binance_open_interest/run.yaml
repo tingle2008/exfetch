@@ -1,0 +1,14 @@
+binance_open_interest:
+  api: 'https://fapi.binance.com'
+  apitype: 'rest'
+  intval: 20
+  subscribe:
+    - '/fapi/v1/openInterest': 'GET'
+      symbol: 'BTCUSDT'
+    - '/fapi/v1/openInterest': 'GET'
+      symbol: 'ETHUSDT'
+  ins_sub_query: >
+    o->>'symbol' as "Symbol",
+    (o->>'openInterest')::float as "openInterest",
+    to_timestamp((o->>'time')::bigint/1000) as "LastUpdateTime" 
+

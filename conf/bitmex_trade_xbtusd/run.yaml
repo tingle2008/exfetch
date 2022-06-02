@@ -1,0 +1,5 @@
+bitmex_trade_xbtusd:
+  api: 'wss://ws.bitmex.com/realtime'
+  apitype: 'wss'
+  subscribe: >
+    {"op": "subscribe", "args": ["trade:XBTUSD"]}

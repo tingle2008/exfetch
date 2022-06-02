@@ -1,0 +1,44 @@
+binance_fut_mark_price:
+  subscribe:  >
+    {
+        "method": "SUBSCRIBE",
+        "params":
+                [ "btcusdt@markPrice@1s","ethusdt@markPrice@1s" ],
+        "id": 1
+    }
+  api: 'wss://fstream.binance.com/stream'
+  dst_table: 'binance_fut_all_mark_price'
+  ins_sub_query: >
+    to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
+    o->>'s' as "Symbol",
+    (o->>'p')::float as "MarkPrice",
+    (o->>'P')::float as "IndexPrice",
+    (o->>'i')::float as "EstSettlePrice",
+    (o->>'r')::float  as "FundingRate",
+    to_timestamp((o->>'T')::bigint/1000)  as "NextFundingTime"
+
+binance_fut_aggtrade:
+    # https://binance-docs.github.io/apidocs/futures/en/#aggregate-trade-streams
+    # Only market trades will be aggregated, which means the insurance fund trades and ADL trades won't be aggregated.
+    # ?? where can I find ADL and insurance trade ?
+  api: 'wss://fstream.binance.com/stream'
+  subscribe:  >
+    {
+        "method": "SUBSCRIBE",
+        "params":
+                [ "btcusdt@aggTrade", "ethusdt@aggTrade"],
+        "id": 1
+    }
+
+  dst_table: 'binance_fut_aggtrade'
+  ins_sub_query: >
+    to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
+    o->>'s' as "Symbol",
+    (o->>'a')::bigint as "AggTradeId",
+    (o->>'p')::float as "Price",
+    (o->>'q')::float as "Quantity",
+    (o->>'f')::bigint as "FirstTid",
+    (o->>'l')::bigint as "LastTid",
+    to_timestamp((o->>'T')::bigint/1000)  as "TradeTime",
+    (o->>'m')::bool  as "BMM"
+

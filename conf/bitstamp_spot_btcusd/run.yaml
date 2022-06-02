@@ -1,0 +1,9 @@
+bitstamp_spot_btcusd:
+  api: 'wss://ws.bitstamp.net'
+  subscribe: >
+     { 
+       "event": "bts:subscribe",
+        "data": {
+                "channel": "live_trades_btcusd"
+        }
+      }
