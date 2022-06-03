@@ -23,7 +23,7 @@ class Info():
         table = {}
 
 
-        for yaml_conf in [ self.directory + "/run.yaml", self.confdir + "/default_dev.yaml" ]:
+        for yaml_conf in [ self.directory + "/run.yaml", self.confdir + "/default.yaml" ]:
             if not exists(yaml_conf):
                 continue
 

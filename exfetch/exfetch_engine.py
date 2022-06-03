@@ -46,11 +46,6 @@ class fTask( metaclass = ABCMeta ):
         self.task_info   = task_info
         self.name        = name
 
-    def getName( self ):
-        return self.__class__.__name__
-
-    def getInfo( self ):
-        return self.info
 
     @abstractmethod
     async def runit(self):
