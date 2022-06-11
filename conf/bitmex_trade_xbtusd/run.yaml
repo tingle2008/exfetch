@@ -3,3 +3,10 @@ bitmex_trade_xbtusd:
   apitype: 'wss'
   subscribe: >
     {"op": "subscribe", "args": ["trade:XBTUSD"]}
+  ins_sub_query: >
+    (o->>'timestamp')::timestamp(0) as "tt" ,
+    o->>'side' as "side",
+    (o->>'size')::integer as "integer",
+    (o->>'price')::float as "price",
+    (o->>'grossValue')::float as "grossValue",
+    (o->>'homeNotional')::float as "homeNotional"

@@ -7,6 +7,12 @@ binance_open_interest:
       symbol: 'BTCUSDT'
     - '/fapi/v1/openInterest': 'GET'
       symbol: 'ETHUSDT'
+  jdata: ''
+  jdata_wanted:
+    - 'symbol'
+    - 'openInterest'
+    - 'time'
+  dst_table: 'haha'
   ins_sub_query: >
     o->>'symbol' as "Symbol",
     (o->>'openInterest')::float as "openInterest",

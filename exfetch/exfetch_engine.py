@@ -54,10 +54,41 @@ class fTask( metaclass = ABCMeta ):
 class FetchTask(fTask):
     def __init__(self, name, task_info):
         super().__init__(name ,task_info)
-        # XXX: getINFO here and 
         self.intval = self.task_info['intval']
         self.apiurl = self.task_info['api']
 
+    def data_to_value(self,msg):
+        '''
+        return value is python built-in data
+        NOT json data.
+        if json payload is NULL
+        '''
+        data = json.loads(msg)
+        jdata_wanted = []
+
+        if 'jdata_wanted' in self.task_info:
+            jdata_wanted = self.task_info['jdata_wanted']
+
+        if self.task_info['jdata'] == '':
+            for jk in jdata_wanted:
+                if jk not in data:
+                    print("Warning:RAW DATA Missing jk key:",jk)
+                    return ''
+            return(data)
+        else:
+            if self.task_info['jdata'] not in data:
+                return ''
+            else:
+                for jk in jdata_wanted:
+                    if isinstance(data[self.task_info['jdata']],list):
+                        if jk not in data[self.task_info['jdata']][0]:
+                            print("Warning:JDATA[0] Missing jk key:",jk)
+                            return ''
+                    elif jk not in data:
+                        print("Warning:JDATA Missing jk key:",jk)
+                        return ''
+                return(data[self.task_info['jdata']])
+ 
     async def fetch_rest_api(self,apiurl,subscribe):
 
         value_list = []
@@ -72,9 +103,24 @@ class FetchTask(fTask):
             if method == 'GET':
                 async with self._session.get(furl,params = params) as resp:
                     msg = await resp.text()
-                    data = json.loads(msg)
-                    value_list.append(data)
+                    ret_value = self.data_to_value(msg)
+                    if ret_value == '':
+                        continue
+                    else:
+                        value_list.append(ret_value)
+
         return json.dumps(value_list)
+
+    async def fetch_wss_api(self,ws):
+
+        value_list = []
+        msg = await ws.receive()
+        ret_value = self.data_to_value(msg.data)
+        if ret_value != '':
+            value_list = ret_value
+
+        return json.dumps(value_list)
+
 
     async def runit(self,q):
 
@@ -83,7 +129,6 @@ class FetchTask(fTask):
                                                 proxy = self.task_info['proxy'],
                                                 verify_ssl = False) as ws:
 
-                #pdb.set_trace()
                 await ws.send_str(self.task_info['subscribe'])
                 while True:
                     msg = await ws.receive()
@@ -92,7 +137,11 @@ class FetchTask(fTask):
 
         elif self.task_info['apitype'] == 'rest':
             while True:
-                data = await self.fetch_rest_api(self.apiurl,self.task_info['subscribe'])
+                data = await self.fetch_rest_api(self.apiurl,
+                                                 self.task_info['subscribe'])
+                if data == '[]':
+                    await asyncio.sleep(self.intval)
+                    continue
                 m = Message(self.name,data)
                 q.put_nowait(m)
                 await asyncio.sleep(self.intval)
@@ -110,7 +159,6 @@ class InjectTask(fTask):
             self.dbpass = task_info[n]['dbpass']
             self.dbname = task_info[n]['dbname']
             break
-
 
     async def setConn(self):
         self.conn = await asyncpg.connect(host=self.dbhost,
@@ -148,6 +196,7 @@ class InjectTask(fTask):
         value_list = []
         value_json = None
         d = json.loads(message.data)
+        d2 = {}
         dst_table = message.name
 
         if 'ins_sub_query' not in self.info[message.name]:
@@ -169,7 +218,7 @@ class InjectTask(fTask):
         if self.info[message.name]['apitype'] == 'rest':
             value_json = message.data
         elif jdata not in d :
-            print("w/o: json payload [data]")
+            print("warning: w/o: json payload [data].")
             return
         elif isinstance(d[jdata],list): 
             value_json = json.dumps(d[jdata])

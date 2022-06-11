@@ -17,3 +17,20 @@ coinbase_ticker:
         }
     ]
     }
+  jdata: 'type'
+  jdata_ignore:
+    - 'aaa'
+    - 'bbb'
+  dst_table: "coinbase_spot_ticker"
+  ins_sub_query: >
+    o->>'product_id' as "product_id",
+    (o->>'price')::float as "price",
+    (o->>'volume_24h')::float as "volume_24h",
+    (o->>'volume_30d')::float as "volume_30d",
+    (o->>'best_bid')::float as "best_bid",
+    (o->>'best_ask')::float as "best_ask",
+    o->>'side' as "side",
+    (o->>'time')::timestamp as "time" ,
+    (o->>'trade_id')::integer as "trade_id",
+    (o->>'last_size')::float  as "last_size"
+
