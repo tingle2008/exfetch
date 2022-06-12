@@ -46,6 +46,11 @@ binance_open_interest:
   api: 'https://fapi.binance.com'
   apitype: 'rest'
   intval: 20
+  jdata: ''
+  jdata_wanted:
+    - 'symbol'
+    - 'openInterest'
+    - 'time'
   subscribe:
     - '/fapi/v1/openInterest': 'GET'
       symbol: 'BTCUSDT'
