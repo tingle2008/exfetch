@@ -81,6 +81,7 @@ class FetchTask(fTask):
             else:
                 for jk in jdata_wanted:
                     if isinstance(data[self.task_info['jdata']],list):
+                        # 1 rec as sample.
                         if jk not in data[self.task_info['jdata']][0]:
                             print("Warning:JDATA[0] Missing jk key:",jk)
                             return ''
@@ -107,7 +108,11 @@ class FetchTask(fTask):
                     if ret_value == '':
                         continue
                     else:
-                        value_list.append(ret_value)
+                        if isinstance(ret_value,list):
+                            for value in ret_value:
+                                value_list.append( value )
+                        else:
+                            value_list.append(ret_value)
 
         return json.dumps(value_list)
 
