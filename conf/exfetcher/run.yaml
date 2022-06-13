@@ -7,6 +7,14 @@ binance_fut_mark_price:
         "id": 1
     }
   api: 'wss://fstream.binance.com/stream'
+  jdata_wanted:
+    - 'E'
+    - 's'
+    - 'P'
+    - 'p'
+    - 'i'
+    - 'r'
+    - 'T'
   dst_table: 'binance_fut_all_mark_price'
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
@@ -29,7 +37,16 @@ binance_fut_aggtrade:
                 [ "btcusdt@aggTrade", "ethusdt@aggTrade"],
         "id": 1
     }
-
+  jdata_wanted:
+    - 'E'
+    - 's'
+    - 'a'
+    - 'p'
+    - 'q'
+    - 'f'
+    - 'l'
+    - 'T'
+    - 'm'
   dst_table: 'binance_fut_aggtrade'
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
@@ -66,6 +83,13 @@ bitmex_trade_xbtusd:
   apitype: 'wss'
   subscribe: >
     {"op": "subscribe", "args": ["trade:XBTUSD"]}
+  jdata_wanted:
+    - 'timestamp'
+    - 'side'
+    - 'size'
+    - 'price'
+    - 'grossValue'
+    - 'homeNotional'
   ins_sub_query: >
     (o->>'timestamp')::timestamp(0) as "tt" ,
     o->>'side' as "side",
@@ -73,3 +97,47 @@ bitmex_trade_xbtusd:
     (o->>'price')::float as "price",
     (o->>'grossValue')::float as "grossValue",
     (o->>'homeNotional')::float as "homeNotional"
+
+coinbase_spot_ticker:
+  api: 'wss://ws-feed.exchange.coinbase.com'
+  subscribe: >
+    {
+    "type": "subscribe",
+    "product_ids": [
+        "BTC-USD",
+        "ETH-USD"
+    ],
+    "channels": [
+        {   
+            "name": "ticker",
+            "product_ids": [
+                "BTC-USD",
+                "ETH-USD"
+            ]
+        }
+    ]
+    }
+  jdata: ''
+  jdata_wanted:
+    - 'product_id'
+    - 'price'
+    - 'volume_24h'
+    - 'volume_30d'
+    - 'best_bid'
+    - 'best_ask'
+    - 'side'
+    - 'time'
+    - 'trade_id'
+    - 'last_size'
+  ins_sub_query: >
+    o->>'product_id' as "product_id",
+    (o->>'price')::float as "price",
+    (o->>'volume_24h')::float as "volume_24h",
+    (o->>'volume_30d')::float as "volume_30d",
+    (o->>'best_bid')::float as "best_bid",
+    (o->>'best_ask')::float as "best_ask",
+    o->>'side' as "side",
+    (o->>'time')::timestamp as "time" ,
+    (o->>'trade_id')::integer as "trade_id",
+    (o->>'last_size')::float  as "last_size"
+
