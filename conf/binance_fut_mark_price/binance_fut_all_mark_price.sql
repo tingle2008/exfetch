@@ -1,1 +1,0 @@
-../binance_fut_all_mark_price/binance_fut_all_mark_price.sql

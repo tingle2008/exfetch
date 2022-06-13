@@ -61,7 +61,7 @@ class FetchTask(fTask):
         '''
         return value is python built-in data
         NOT json data.
-        if json payload is NULL
+        if json payload is NULL return ''
         '''
         data = json.loads(msg)
         jdata_wanted = []
@@ -77,17 +77,21 @@ class FetchTask(fTask):
             return(data)
         else:
             if self.task_info['jdata'] not in data:
+                print('Warning:fetched json str:{} has no [{}] key'.format(data,self.task_info['jdata']))
                 return ''
             else:
                 for jk in jdata_wanted:
                     if isinstance(data[self.task_info['jdata']],list):
-                        # 1 rec as sample.
+                        # pick 1 rec as sample.
                         if jk not in data[self.task_info['jdata']][0]:
                             print("Warning:JDATA[0] Missing jk key:",jk)
                             return ''
-                    elif jk not in data:
-                        print("Warning:JDATA Missing jk key:",jk)
-                        return ''
+                    else:
+                        # use jdata as dict
+                        if jk not in data[self.task_info['jdata']]:
+                            print("Warning:JDATA_DICT Missing jk key:",jk)
+                            return ''
+
                 return(data[self.task_info['jdata']])
  
     async def fetch_rest_api(self,apiurl,subscribe):
@@ -122,10 +126,12 @@ class FetchTask(fTask):
         msg = await ws.receive()
         ret_value = self.data_to_value(msg.data)
         if ret_value != '':
-            value_list = ret_value
-
+            if isinstance(ret_value,list):
+                for value in ret_value:
+                    value_list.append( value )
+            else:
+                value_list.append( ret_value )
         return json.dumps(value_list)
-
 
     async def runit(self,q):
 
@@ -136,9 +142,13 @@ class FetchTask(fTask):
 
                 await ws.send_str(self.task_info['subscribe'])
                 while True:
-                    msg = await ws.receive()
-                    m = Message(self.name, msg.data)
-                    q.put_nowait(m)
+                    #msg = await ws.receive()
+                    data = await self.fetch_wss_api(ws)
+                    if data == '[]':
+                        continue
+                    else:
+                        m = Message(self.name, data)
+                        q.put_nowait(m)
 
         elif self.task_info['apitype'] == 'rest':
             while True:
@@ -153,7 +163,7 @@ class FetchTask(fTask):
 
 class InjectTask(fTask):
     def __init__(self, task_info = None):
-        self.info   = task_info
+        self.info = task_info
         self.tbl_cache = {}
 
         for n in task_info:
@@ -198,10 +208,7 @@ class InjectTask(fTask):
 
     async def tableAppend(self,message):
 
-        value_list = []
-        value_json = None
-        d = json.loads(message.data)
-        d2 = {}
+        value_json = message.data
         dst_table = message.name
 
         if 'ins_sub_query' not in self.info[message.name]:
@@ -217,19 +224,6 @@ class InjectTask(fTask):
         if not dst_table_exist:
             print('{} does not exist,just say:{}'.format(message.name,message.data))
             return
-            
-        jdata = self.info[message.name]['jdata'] 
-
-        if self.info[message.name]['apitype'] == 'rest':
-            value_json = message.data
-        elif jdata not in d :
-            print("warning: w/o: json payload [data].")
-            return
-        elif isinstance(d[jdata],list): 
-            value_json = json.dumps(d[jdata])
-        else:
-            value_list.append(d[jdata])
-            value_json = json.dumps(value_list)
 
         jsonb_array_elements_sub_query = """
             select jsonb_array_elements('{}'::jsonb) as o
@@ -249,6 +243,7 @@ class InjectTask(fTask):
 
         while True:
             m = await q.get()
+            #pdb.set_trace()
             await self.tableAppend(m)
             q.task_done()
         return

@@ -1,15 +1,20 @@
-default:
-  name: 'binance_fut_mark_price'
-  exchange: 'binance'
-  api: 'fstream.binance.com/stream'
+binance_fut_mark_price:
   subscribe:  >
     {
         "method": "SUBSCRIBE",
         "params":
-                [ "!markPrice@arr@1s" ],
+                [ "btcusdt@markPrice@1s","ethusdt@markPrice@1s" ],
         "id": 1
     }
-
+  api: 'wss://fstream.binance.com/stream'
+  jdata_wanted:
+    - 'E'
+    - 's'
+    - 'P'
+    - 'p'
+    - 'i'
+    - 'r'
+    - 'T'
   dst_table: 'binance_fut_all_mark_price'
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
@@ -19,3 +24,5 @@ default:
     (o->>'i')::float as "EstSettlePrice",
     (o->>'r')::float  as "FundingRate",
     to_timestamp((o->>'T')::bigint/1000)  as "NextFundingTime"
+
+

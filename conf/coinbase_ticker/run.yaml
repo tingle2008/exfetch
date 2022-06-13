@@ -17,10 +17,18 @@ coinbase_ticker:
         }
     ]
     }
-  jdata: 'type'
-  jdata_ignore:
-    - 'aaa'
-    - 'bbb'
+  jdata: ''
+  jdata_wanted:
+    - 'product_id'
+    - 'price'
+    - 'volume_24h'
+    - 'volume_30d'
+    - 'best_bid'
+    - 'best_ask'
+    - 'side'
+    - 'time'
+    - 'trade_id'
+    - 'last_size'
   dst_table: "coinbase_spot_ticker"
   ins_sub_query: >
     o->>'product_id' as "product_id",
