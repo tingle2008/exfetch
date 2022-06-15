@@ -1,10 +1,9 @@
-default:
-  name: 'binance_fut_aggtrade'
+binance_fut_aggtrade:
   exchange: 'binance'
     # https://binance-docs.github.io/apidocs/futures/en/#aggregate-trade-streams
     # Only market trades will be aggregated, which means the insurance fund trades and ADL trades won't be aggregated.
     # ?? where can I find ADL and insurance trade ?
-  api: 'fstream.binance.com/stream'
+  api: 'wss://fstream.binance.com/stream'
   subscribe:  >
     {
         "method": "SUBSCRIBE",
@@ -12,7 +11,16 @@ default:
                 [ "btcusdt@aggTrade", "ethusdt@aggTrade"],
         "id": 1
     }
-
+  jdata_wanted:
+    - 'E'
+    - 's'
+    - 'a'
+    - 'p'
+    - 'q'
+    - 'f'
+    - 'l'
+    - 'T'
+    - 'm'
   dst_table: 'binance_fut_aggtrade'
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
