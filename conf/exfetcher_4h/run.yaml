@@ -1,5 +1,6 @@
 coinbase_spot_ticker:
   api: 'wss://ws-feed.exchange.coinbase.com'
+  loglevel: 30
   subscribe: >
     {
     "type": "subscribe",
