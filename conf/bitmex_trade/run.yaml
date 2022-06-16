@@ -1,0 +1,22 @@
+#https://www.bitmex.com/app/wsAPI
+bitmex_trade:
+  api: 'wss://ws.bitmex.com/realtime'
+  apitype: 'wss'
+  loglevel: 20 #info:20 warning:30 error:40 CRITICAL:50
+  subscribe: >
+    {"op": "subscribe", "args": ["trade:XBTUSD","trade:ETHUSD"]}
+  jdata_wanted:
+      - 'timestamp'
+      - 'side'
+      - 'size'
+      - 'price'
+      - 'grossValue'
+      - 'homeNotional'
+  ins_sub_query: >
+    (o->>'timestamp')::timestamp(0) as "tt" ,
+    o->>'symbol' as "symbol",
+    o->>'side' as "side",
+    (o->>'size')::integer as "integer",
+    (o->>'price')::float as "price",
+    (o->>'grossValue')::float as "grossValue",
+    (o->>'homeNotional')::float as "homeNotional"
