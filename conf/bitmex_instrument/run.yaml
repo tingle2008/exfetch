@@ -1,0 +1,20 @@
+#https://www.bitmex.com/api/explorer/#!/Instrument/Instrument_get
+bitmex_instrument:
+  loglevel: 20 #info:20 w:30 e:40 C:50, both fetcher and injector loglevel
+  api: 'https://www.bitmex.com'
+  apitype: 'rest'
+  intval: 20
+  subscribe:
+    - '/api/v1/instrument': 'GET'
+      symbol: 'XBT'
+      reverse: 'false'
+    - '/api/v1/instrument': 'GET'
+      symbol: 'ETH'
+      reverse: 'false'
+  jdata: ''
+  jdata_wanted:
+    - 'symbol'
+    - 'markPrice'
+    - 'openInterest'
+    - 'openValue'
+    - 'fundingRate'

@@ -72,6 +72,7 @@ class FetchTask(fTask):
         if json payload is NULL return ''
         '''
         data = json.loads(msg)
+        self.logger.info(data)
         jdata_wanted = []
 
         if 'jdata_wanted' in self.task_info:
@@ -79,9 +80,14 @@ class FetchTask(fTask):
 
         if self.task_info['jdata'] == '':
             for jk in jdata_wanted:
-                if jk not in data:
-                    self.logger.warning("RAW DATA Missing jk key:{}".format(jk))
-                    return ''
+                if isinstance(data,list):
+                    if jk not in data[0]:
+                        self.logger.warning("RAW DATA[0] Missing json_key:{}".format(jk))
+                        return ''
+                else:
+                    if jk not in data:
+                        self.logger.warning("RAW DATA Missing json_key:{}".format(jk))
+                        return ''
             return(data)
         else:
             if self.task_info['jdata'] not in data:
@@ -92,12 +98,12 @@ class FetchTask(fTask):
                     if isinstance(data[self.task_info['jdata']],list):
                         # pick 1 rec as sample.
                         if jk not in data[self.task_info['jdata']][0]:
-                            self.logger.warning("JDATA[0] Missing jk key:{}".format(jk))
+                            self.logger.warning("JDATA[0] Missing json_key:{}".format(jk))
                             return ''
                     else:
                         # use jdata as dict
                         if jk not in data[self.task_info['jdata']]:
-                            self.logger.warning("JDATA_DICT Missing jk key:{}".format(jk))
+                            self.logger.warning("JDATA_DICT Missing json_key:{}".format(jk))
                             return ''
 
                 return(data[self.task_info['jdata']])
