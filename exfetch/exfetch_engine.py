@@ -1,3 +1,5 @@
+import logging
+from logging import Logger
 import asyncio,asyncpg
 from aiohttp import ClientSession, ClientWebSocketResponse 
 import websockets
@@ -7,10 +9,15 @@ from abc import ABCMeta,abstractmethod
 from .utils import rel2abs,whoami
 from .info import Info
 import pdb 
-
-
 import pprint
+
 pp = pprint.PrettyPrinter(indent=4)
+
+logging.basicConfig(level=logging.ERROR,
+                    #format='%(asctime)s %(name)-2s %(levelname)-2s %(message)s',
+                    format='%(name)-2s %(levelname)-2s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    stream=sys.stdout)
 
 class Message:
     def __init__(self, name, data = None):
@@ -25,9 +32,9 @@ class FetchEngine(metaclass = ABCMeta):
         self.__allInjector = None
         self.__fetcherInfo = None
 
-    def error(self,msg):
-        print("error msg is:", msg)
-        raise SystemExit(1)
+    def exit_with_error(self,msg):
+        self.logger.error(msg)
+        sys.exit(1)
 
     def _getFetcherInfo(self):
         return(self.__fetcherInfo)
@@ -43,9 +50,8 @@ class FetchEngine(metaclass = ABCMeta):
 class fTask( metaclass = ABCMeta ):
     def __init__(self, name , task_info = None):
         self._session = ClientSession()
-        self.task_info   = task_info
-        self.name        = name
-
+        self.task_info = task_info
+        self.name      = name
 
     @abstractmethod
     async def runit(self):
@@ -56,6 +62,8 @@ class FetchTask(fTask):
         super().__init__(name ,task_info)
         self.intval = self.task_info['intval']
         self.apiurl = self.task_info['api']
+        self.logger = logging.getLogger(self.name)
+        self.logger.setLevel(self.task_info['loglevel'])
 
     def data_to_value(self,msg):
         '''
@@ -72,24 +80,24 @@ class FetchTask(fTask):
         if self.task_info['jdata'] == '':
             for jk in jdata_wanted:
                 if jk not in data:
-                    print("Warning:RAW DATA Missing jk key:",jk)
+                    self.logger.warning("RAW DATA Missing jk key:",jk)
                     return ''
             return(data)
         else:
             if self.task_info['jdata'] not in data:
-                print('Warning:fetched json str:{} has no [{}] key'.format(data,self.task_info['jdata']))
+                self.logger.warning('fetched json str:{} has no [{}] key'.format(data,self.task_info['jdata']))
                 return ''
             else:
                 for jk in jdata_wanted:
                     if isinstance(data[self.task_info['jdata']],list):
                         # pick 1 rec as sample.
                         if jk not in data[self.task_info['jdata']][0]:
-                            print("Warning:JDATA[0] Missing jk key:",jk)
+                            self.logger.warning("JDATA[0] Missing jk key:",jk)
                             return ''
                     else:
                         # use jdata as dict
                         if jk not in data[self.task_info['jdata']]:
-                            print("Warning:JDATA_DICT Missing jk key:",jk)
+                            self.logger.warning("JDATA_DICT Missing jk key:",jk)
                             return ''
 
                 return(data[self.task_info['jdata']])
@@ -165,6 +173,7 @@ class InjectTask(fTask):
     def __init__(self, task_info = None):
         self.info = task_info
         self.tbl_cache = {}
+        self.logger = logging.getLogger('pgdb')
 
         for n in task_info:
             self.schema = task_info[n]['schema']
@@ -173,13 +182,14 @@ class InjectTask(fTask):
             self.dbuser = task_info[n]['dbuser']
             self.dbpass = task_info[n]['dbpass']
             self.dbname = task_info[n]['dbname']
+            self.logger.setLevel(task_info[n]['loglevel'])
             break
 
     async def setConn(self):
         self.conn = await asyncpg.connect(host=self.dbhost,
-					     				 port=self.dbport,
-						    			 user=self.dbuser,
-						    			 password=self.dbpass)
+                                          port=self.dbport,
+                                          user=self.dbuser,
+                                          password=self.dbpass)
 
     async def tableExist(self,schema,table):
 
@@ -195,14 +205,14 @@ class InjectTask(fTask):
         	tablename  = '{}'
     	);
         """.format(schema,table)
-        print("checking table: {} ".format(table))
+        self.logger.info("checking table: {} ".format(table))
         res = await self.conn.fetchval(check_stmt)
         if not res:
-            print("table {} does not exist!!".format(table))
+            self.logger.warning("table {} does not exist!!".format(table))
             self.tbl_cache[table] = False
             return False
         else:
-            print("check table: {} done! ".format(table))
+            self.logger.info("check table: {} done! ".format(table))
             self.tbl_cache[table] = True
             return True
 
@@ -212,7 +222,7 @@ class InjectTask(fTask):
         dst_table = message.name
 
         if 'ins_sub_query' not in self.info[message.name]:
-            print('{} just say: {}'.format(message.name,message.data))
+            self.logger.warning('{} just say: {}'.format(message.name,message.data))
             return
         ins_value = self.info[message.name]['ins_sub_query']
 
@@ -222,7 +232,7 @@ class InjectTask(fTask):
         dst_table_exist = await self.tableExist( self.schema, dst_table )
 
         if not dst_table_exist:
-            print('{} does not exist,just say:{}'.format(message.name,message.data))
+            self.logger.warning('{} does not exist,just say:{}'.format(message.name,message.data))
             return
 
         jsonb_array_elements_sub_query = """
@@ -235,7 +245,7 @@ class InjectTask(fTask):
                    ins_value,
                    jsonb_array_elements_sub_query)
 
-        print("executing:", ins_stmt)
+        self.logger.info('exec:{}'.format(ins_stmt))
         await self.conn.execute(ins_stmt)
 
     async def runit(self,q):
@@ -287,8 +297,10 @@ class ExFetch( FetchEngine ):
 
         self._createInjectTask(self.info.data)
         await self._queue.join()
-        await asyncio.gather(*self.tasks, return_exceptions=True)
-        print('====')
+        try:
+            await asyncio.gather(*self.tasks, return_exceptions=False)
+        except Exception as e:
+            self.exit_with_error(repr(e))
 
 
     def run(self):

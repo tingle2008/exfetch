@@ -1,3 +1,23 @@
+binance_open_interest:
+  loglevel: 30 #info:20 w:30 e:40 C:50, both fetcher and injector loglevel
+  api: 'https://fapi.binance.com'
+  apitype: 'rest'
+  intval: 20
+  jdata: ''
+  jdata_wanted:
+    - 'symbol'
+    - 'openInterest'
+    - 'time'
+  subscribe:
+    - '/fapi/v1/openInterest': 'GET'
+      symbol: 'BTCUSDT'
+    - '/fapi/v1/openInterest': 'GET'
+      symbol: 'ETHUSDT'
+  ins_sub_query: >
+    o->>'symbol' as "Symbol",
+    (o->>'openInterest')::float as "openInterest",
+    to_timestamp((o->>'time')::bigint/1000) as "LastUpdateTime" 
+
 binance_fut_mark_price:
   subscribe:  >
     {
@@ -59,30 +79,12 @@ binance_fut_aggtrade:
     to_timestamp((o->>'T')::bigint/1000)  as "TradeTime",
     (o->>'m')::bool  as "BMM"
 
-binance_open_interest:
-  api: 'https://fapi.binance.com'
-  apitype: 'rest'
-  intval: 20
-  jdata: ''
-  jdata_wanted:
-    - 'symbol'
-    - 'openInterest'
-    - 'time'
-  subscribe:
-    - '/fapi/v1/openInterest': 'GET'
-      symbol: 'BTCUSDT'
-    - '/fapi/v1/openInterest': 'GET'
-      symbol: 'ETHUSDT'
-  ins_sub_query: >
-    o->>'symbol' as "Symbol",
-    (o->>'openInterest')::float as "openInterest",
-    to_timestamp((o->>'time')::bigint/1000) as "LastUpdateTime" 
-
-bitmex_trade_xbtusd:
+#https://www.bitmex.com/app/wsAPI
+bitmex_trade:
   api: 'wss://ws.bitmex.com/realtime'
   apitype: 'wss'
   subscribe: >
-    {"op": "subscribe", "args": ["trade:XBTUSD"]}
+    {"op": "subscribe", "args": ["trade:XBTUSD","trade:ETHUSD"]}
   jdata_wanted:
     - 'timestamp'
     - 'side'
@@ -92,6 +94,7 @@ bitmex_trade_xbtusd:
     - 'homeNotional'
   ins_sub_query: >
     (o->>'timestamp')::timestamp(0) as "tt" ,
+    o->>'symbol' as "symbol",
     o->>'side' as "side",
     (o->>'size')::integer as "integer",
     (o->>'price')::float as "price",
