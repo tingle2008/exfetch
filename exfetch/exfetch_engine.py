@@ -33,7 +33,7 @@ class FetchEngine(metaclass = ABCMeta):
         self.__fetcherInfo = None
 
     def exit_with_error(self,msg):
-        self.logger.error(msg)
+        print("error:",msg)
         sys.exit(1)
 
     def _getFetcherInfo(self):
