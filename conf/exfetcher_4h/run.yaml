@@ -41,3 +41,32 @@ coinbase_spot_ticker:
     (o->>'trade_id')::integer as "trade_id",
     (o->>'last_size')::float  as "last_size"
 
+bitmex_instrument:
+  loglevel: 30 #info:20 w:30 e:40 C:50, both fetcher and injector loglevel
+  api: 'https://www.bitmex.com'
+  apitype: 'rest'
+  intval: 20
+  subscribe:
+    - '/api/v1/instrument': 'GET'
+      symbol: 'XBT'
+      reverse: 'false'
+    - '/api/v1/instrument': 'GET'
+      symbol: 'ETH'
+      reverse: 'false'
+  jdata: ''
+  jdata_wanted:
+    - 'symbol'
+    - 'markPrice'
+    - 'openInterest'
+    - 'openValue'
+    - 'fundingRate'
+  ins_sub_query: >
+    (o->>'symbol')::varchar as "symbol",
+    (o->>'openInterest')::integer as "openInterest",
+    (o->>'openValue')::bigint as "openValue",
+    (o->>'markPrice')::float as "markPrice",
+    (o->>'midPrice')::float as "midPrice",
+    (o->>'vwap')::float as "vwap",
+    (o->>'fundingRate')::float as "fundingRate",
+    (o->>'indicativeFundingRate')::float as "indicativeFundingRate",
+    (o->>'timestamp')::timestamp as "ts"
