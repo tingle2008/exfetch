@@ -22,3 +22,5 @@ $$ partition of public.bitmex_trade for values from ('$$ ||
                     date_trunc('day',to_date('20220705','yyyymmdd')),'1 day') as tt(zz);
 
 /gexec
+
+create index bitmex_trade_tt_idx on bitmex_trade using brin ("tt");

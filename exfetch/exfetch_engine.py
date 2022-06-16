@@ -80,7 +80,7 @@ class FetchTask(fTask):
         if self.task_info['jdata'] == '':
             for jk in jdata_wanted:
                 if jk not in data:
-                    self.logger.warning("RAW DATA Missing jk key:",jk)
+                    self.logger.warning("RAW DATA Missing jk key:{}".format(jk))
                     return ''
             return(data)
         else:
@@ -92,12 +92,12 @@ class FetchTask(fTask):
                     if isinstance(data[self.task_info['jdata']],list):
                         # pick 1 rec as sample.
                         if jk not in data[self.task_info['jdata']][0]:
-                            self.logger.warning("JDATA[0] Missing jk key:",jk)
+                            self.logger.warning("JDATA[0] Missing jk key:{}".format(jk))
                             return ''
                     else:
                         # use jdata as dict
                         if jk not in data[self.task_info['jdata']]:
-                            self.logger.warning("JDATA_DICT Missing jk key:",jk)
+                            self.logger.warning("JDATA_DICT Missing jk key:{}".format(jk))
                             return ''
 
                 return(data[self.task_info['jdata']])
