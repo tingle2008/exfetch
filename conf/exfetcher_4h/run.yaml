@@ -45,7 +45,7 @@ coinbase_spot_ticker:
 bitmex_instrument:
   api: 'https://www.bitmex.com'
   apitype: 'rest'
-  intval: 20
+  intval: 2
   subscribe:
     - '/api/v1/instrument': 'GET'
       symbol: 'XBT'
