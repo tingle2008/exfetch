@@ -10,3 +10,4 @@ jdata: 'data'
 apitype: 'wss'
 proxy: ''
 intval: 5 #sec
+verbose: 0
