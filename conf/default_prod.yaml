@@ -1,0 +1,13 @@
+dbtype: 'postgresql'
+dbhost: 'localhost'
+dbport: 5432
+dbuser: 'trader'
+dbname: 'trader'
+dbpass: 'hello1234'
+schema: 'public'
+exchange: 'binance'
+jdata: 'data'
+apitype: 'wss'
+proxy: ''
+intval: 5 #sec
+loglevel: 40
