@@ -1,4 +1,5 @@
 coinbase_spot_ticker:
+  loglevel: 30 #info:20 w:30 e:40 C:50, both fetcher and injector loglevel
   api: 'wss://ws-feed.exchange.coinbase.com'
   subscribe: >
     {
@@ -42,7 +43,6 @@ coinbase_spot_ticker:
     (o->>'last_size')::float  as "last_size"
 
 bitmex_instrument:
-  loglevel: 30 #info:20 w:30 e:40 C:50, both fetcher and injector loglevel
   api: 'https://www.bitmex.com'
   apitype: 'rest'
   intval: 20
