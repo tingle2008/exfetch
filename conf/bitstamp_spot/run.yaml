@@ -1,0 +1,45 @@
+bitstamp_spot_btcusd:
+  api: 'wss://ws.bitstamp.net'
+  loglevel: 20
+  subscribe: >
+     { 
+       "event": "bts:subscribe",
+        "data": {
+                "channel": "live_trades_btcusd"
+        }
+     }
+  jdata_wanted:
+    - 'timestamp'
+    - 'amount'
+    - 'price'
+  dst_table: "bitstamp_spot"
+  ins_sub_query: >
+    to_timestamp((o->>'timestamp')::bigint) as "ts",
+    (o->>'amount')::float as "amount",
+    (o->>'price')::float as "price",
+    (o->>'type')::smallint as "type",
+    'BTCUSD' as "symbol"
+ 
+
+bitstamp_spot_ethusd:
+  api: 'wss://ws.bitstamp.net'
+  loglevel: 20
+  subscribe: >
+     { 
+       "event": "bts:subscribe",
+        "data": {
+                "channel": "live_trades_ethusd"
+        }
+     }
+  jdata_wanted:
+    - 'timestamp'
+    - 'amount'
+    - 'price'
+  dst_table: "bitstamp_spot"
+  ins_sub_query: >
+    to_timestamp((o->>'timestamp')::bigint) as "ts",
+    (o->>'amount')::float as "amount",
+    (o->>'price')::float as "price",
+    (o->>'type')::smallint as "type",
+    'ETHUSD' as "symbol"
+ 
