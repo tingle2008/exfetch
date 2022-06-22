@@ -72,6 +72,7 @@ bitmex_instrument:
     (o->>'timestamp')::timestamp as "ts"
 
 bitstamp_spot_btcusd:
+  loglevel: 20
   api: 'wss://ws.bitstamp.net'
   subscribe: >
      { 
@@ -94,6 +95,7 @@ bitstamp_spot_btcusd:
  
 
 bitstamp_spot_ethusd:
+  loglevel: 20
   api: 'wss://ws.bitstamp.net'
   subscribe: >
      { 

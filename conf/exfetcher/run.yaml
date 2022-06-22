@@ -81,6 +81,7 @@ binance_fut_aggtrade:
 
 #https://www.bitmex.com/app/wsAPI
 bitmex_trade:
+  loglevel: 20
   api: 'wss://ws.bitmex.com/realtime'
   apitype: 'wss'
   subscribe: >
