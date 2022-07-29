@@ -72,7 +72,17 @@ class FetchTask(fTask):
         if json payload is NULL return ''
         '''
         data = json.loads(msg)
+
+        if 'params' in data:
+            data = data['params']
+
         self.logger.info(data)
+
+        if 'type' in data:
+            self.logger.info("Matching deribit heartbeat.")
+            if data['type'] == 'test_request':
+                return 'deribit_heartbeat'
+
         jdata_wanted = []
 
         if 'jdata_wanted' in self.task_info:
@@ -139,6 +149,10 @@ class FetchTask(fTask):
         value_list = []
         msg = await ws.receive()
         ret_value = self.data_to_value(msg.data)
+
+        if ret_value == 'deribit_heartbeat':
+            return ret_value
+
         if ret_value != '':
             if isinstance(ret_value,list):
                 for value in ret_value:
@@ -154,12 +168,24 @@ class FetchTask(fTask):
                                                 proxy = self.task_info['proxy'],
                                                 verify_ssl = False) as ws:
 
+                if 'test' in self.task_info:
+                    if self.task_info['test'] == 'deribit':
+                        self.logger.info("Deribit set heartbeat.")
+                        await ws.send_str(self.task_info['deribit_set_heartbeat'])
+                    else:
+                        self.logger.warning("NOT implement test for {}".format(self.task_info['test']))
+
                 await ws.send_str(self.task_info['subscribe'])
+
                 while True:
                     #msg = await ws.receive()
                     data = await self.fetch_wss_api(ws)
-                    if data == '[]':
+
+                    if   data == '[]':
                         continue
+                    elif data == 'deribit_heartbeat':
+                        self.logger.info("deribit heartbeat respone")
+                        await ws.send_str(self.task_info['deribit_heartbeat_respone'])
                     else:
                         m = Message(self.name, data)
                         q.put_nowait(m)

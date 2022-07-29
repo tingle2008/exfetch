@@ -1,0 +1,13 @@
+deribit_trade_btc:
+  loglevel: 20
+  api: 'wss://www.deribit.com/ws/api/v2'
+  subscribe: >
+    {"jsonrpc": "2.0",
+     "method": "public/subscribe",
+     "id": 42,
+     "params": {
+        "channels": ["trades.option.BTC.100ms","trades.option.ETH.100ms","trades.option.SOL.100ms"]}}
+
+  test: 'deribit'
+  dst_table: 'deribit_trade'
+  exchange: 'deribit'
