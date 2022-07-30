@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export HOME=/var/lib/postgresql
+. $HOME/v/.prod/local/bin/activate
+
+export PATH=$HOME/.local/bin:$PATH
+
+
+exec 2>&1
+exec setuidgid postgres exfetch .
