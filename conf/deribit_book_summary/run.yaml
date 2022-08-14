@@ -11,7 +11,7 @@ deribit_book_summary:
     - 'instrument_name'
     - 'creation_timestamp'
     - 'base_currency'
-  intval: 60
+  intval: 600
   subscribe:
     - 'get_book_summary_by_currency': 'GET'
       currency: 'BTC'
