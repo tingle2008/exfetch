@@ -1,0 +1,1 @@
+55 23 * * *     /var/lib/postgresql/exfetch/scripts/ext_table_and_restart.sh >> /tmp/e.log 2>&1

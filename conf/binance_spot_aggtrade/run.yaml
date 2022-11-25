@@ -1,5 +1,4 @@
-binance_fut_aggtrade:
-  name: 'binance_fut_aggtrade'
+binance_spot_aggtrade:
   exchange: 'binance'
     # https://binance-docs.github.io/apidocs/futures/en/#aggregate-trade-streams
     # Only market trades will be aggregated, which means the insurance fund trades and ADL trades won't be aggregated.
@@ -10,7 +9,7 @@ binance_fut_aggtrade:
     {
         "method": "SUBSCRIBE",
         "params":
-                [ "btcusdt@aggTrade", "ethusdt@aggTrade"],
+                [ "btcusdt@aggTrade", "ethbtc@aggTrade", "ethusdt@aggTrade"],
         "id": 1
     }
 
@@ -18,7 +17,6 @@ binance_fut_aggtrade:
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
     o->>'s' as "Symbol",
-    (o->>'a')::bigint as "AggTradeId",
     (o->>'p')::float as "Price",
     (o->>'q')::float as "Quantity",
     (o->>'f')::bigint as "FirstTid",
