@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+date_str=`date +%Y%m%d -d '-120 day'`
+
 for table_name in binance_fut_aggtrade \
 		  binance_fut_all_mark_price \
 		  binance_spot_aggtrade \
@@ -9,8 +12,10 @@ for table_name in binance_fut_aggtrade \
 		  coinbase_spot_ticker
 	  do 
 		  echo $table_name
-
-	  	  psql -U trader   << SQL_DOC
+                  psql -U trader << DROP_SQL
+drop table jumbo.${table_name}_${date_str};
+DROP_SQL
+	  	  psql -U trader << SQL_DOC
 
 select 'create table if not exists  jumbo.${table_name}_' ||
                             extract(year from zz) ||
