@@ -12,7 +12,7 @@ create table public.deribit_opt_trade ( "trade_base" varchar(5),
           partition by range("timestamp")
 
 
-select 'create table jumbo.deribit_opt_trade_' ||
+select 'create table public.deribit_opt_trade_' ||
                     extract(year from zz) ||
    to_char(extract(month from zz),'fm00') ||
 $$ partition of jumbo.deribit_opt_trade for values from ('$$ ||

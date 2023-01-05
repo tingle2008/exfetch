@@ -1,0 +1,73 @@
+deribit_book_summary_options:
+  loglevel: 20 #info:20 w:30 e:40 C:50, both fetcher and injector loglevel
+  api: 'https://www.deribit.com/api/v2/public/'
+  apitype: 'rest'
+  jdata: 'result'
+  jdata_wanted:
+    - 'volume'
+    - 'base_currency'
+  intval: 600
+  subscribe:
+    - 'get_book_summary_by_currency': 'GET'
+      currency: 'BTC'
+      kind: 'option'
+    - 'get_book_summary_by_currency': 'GET'
+      currency: 'ETH'
+      kind: 'option'
+  exchange: 'deribit'
+  ins_sub_query: >
+    (o->>'volume')::float as "volume",
+    (o->>'underlying_price')::float as "underlying_price",
+    (o->>'underlying_index')::varchar as "underlying_index",
+    (o->>'quote_currency')::varchar as "quote_currency",
+    (case when ((o->>'price_change')::varchar = 'null') then NULL else (o->>'price_change')::float end) as "price_change",
+    (case when ((o->>'open_interest')::varchar = 'null') then NULL else (o->>'open_interest')::float end) as "open_interest",
+    (case when ((o->>'mid_price')::varchar = 'null') then NULL else (o->>'mid_price')::float end) as "mid_price",
+    (case when ((o->>'mark_price')::varchar = 'null') then NULL else (o->>'mark_price')::float end) as "mark_price",
+    (case when ((o->>'low')::varchar = 'null') then NULL else (o->>'low')::float end) as "low",
+    (case when ((o->>'last')::varchar = 'null') then NULL else (o->>'last')::float end) as "last",
+    (case when ((o->>'interest_rate')::varchar = 'null') then NULL else (o->>'interest_rate')::float end) as "interest_rate",
+    (o->>'instrument_name')::varchar as "instrument_name",
+    (case when ((o->>'high')::varchar = 'null') then NULL else (o->>'high')::float end) as "high",
+    (case when ((o->>'estimated_delivery_price')::varchar = 'null') then NULL else (o->>'estimated_delivery_price')::float end) as "estimated_delivery_price",
+    to_timestamp(((o->>'creation_timestamp')::bigint/(1000 * 600))::bigint * 600) as "creation_timestamp",
+    (case when ((o->>'bid_price')::varchar = 'null') then NULL else (o->>'bid_price')::float end) as "bid_price",
+    o->>'base_currency' as "base_currency",
+    (case when ((o->>'ask_price')::varchar = 'null') then NULL else (o->>'ask_price')::float end) as "ask_price"
+
+deribit_book_summary_future:
+  loglevel: 20
+  api: 'https://www.deribit.com/api/v2/public/'
+  apitype: 'rest'
+  jdata: 'result'
+  jdata_wanted:
+    - 'volume'
+    - 'base_currency'
+  intval: 600
+  subscribe:
+    - 'get_book_summary_by_currency': 'GET'
+      currency: 'BTC'
+      kind: 'future'
+    - 'get_book_summary_by_currency': 'GET'
+      currency: 'ETH'
+      kind: 'future'
+  exchange: 'deribit'
+  ins_sub_query: >
+    (o->>'volume_usd')::float as "volume_usd",
+    (o->>'volume_notional')::float as "volume_notional",
+    (o->>'volume')::float as "volume",
+    (o->>'quote_currency')::varchar as "quote_currency",
+    (case when ((o->>'price_change')::varchar = 'null') then NULL else (o->>'price_change')::float end) as "price_change",
+    (case when ((o->>'open_interest')::varchar = 'null') then NULL else (o->>'open_interest')::float end) as "open_interest",
+    (case when ((o->>'mid_price')::varchar = 'null') then NULL else (o->>'mid_price')::float end) as "mid_price",
+    (case when ((o->>'mark_price')::varchar = 'null') then NULL else (o->>'mark_price')::float end) as "mark_price",
+    (case when ((o->>'low')::varchar = 'null') then NULL else (o->>'low')::float end) as "low",
+    (case when ((o->>'last')::varchar = 'null') then NULL else (o->>'last')::float end) as "last",
+    (o->>'instrument_name')::varchar as "instrument_name",
+    (case when ((o->>'high')::varchar = 'null') then NULL else (o->>'high')::float end) as "high",
+    (case when ((o->>'estimated_delivery_price')::varchar = 'null') then NULL else (o->>'estimated_delivery_price')::float end) as "estimated_delivery_price",
+    to_timestamp(((o->>'creation_timestamp')::bigint/(1000 * 600))::bigint * 600) as "creation_timestamp",
+    (o->>'underlying_price')::float as "underlying_price",
+    (case when ((o->>'bid_price')::varchar = 'null') then NULL else (o->>'bid_price')::float end) as "bid_price",
+    o->>'base_currency' as "base_currency",
+    (case when ((o->>'ask_price')::varchar = 'null') then NULL else (o->>'ask_price')::float end) as "ask_price"
