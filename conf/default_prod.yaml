@@ -11,3 +11,7 @@ apitype: 'wss'
 proxy: ''
 intval: 5 #sec
 loglevel: 40
+deribit_set_heartbeat: >
+  { "jsonrpc" : "2.0", "id" : 9098, "method" : "public/set_heartbeat", "params" : { "interval" : 30 }}
+deribit_heartbeat_respone: >
+  { "jsonrpc" : "2.0", "id" : 8212, "method" : "public/test", "params" : {}}

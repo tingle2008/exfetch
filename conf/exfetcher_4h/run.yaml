@@ -113,3 +113,28 @@ bitstamp_spot_ethusd:
     (o->>'price')::float as "price",
     (o->>'type')::smallint as "type",
     'ETHUSD' as "symbol"
+
+deribit_trade:
+  api: 'wss://www.deribit.com/ws/api/v2'
+  subscribe: >
+    {"jsonrpc": "2.0",
+     "method": "public/subscribe",
+     "id": 42,
+     "params": {
+        "channels": ["trades.future.any.100ms","trades.option.any.100ms"]}}
+  test: 'deribit'
+  exchange: 'deribit'
+  ins_sub_query: >
+    (o->>'amount')::float as "amount",
+    (o->>'block_trade_id')::varchar as "block_trade_id",
+    (o->>'direction')::varchar as "direction",
+    (o->>'index_price')::float as "index_price",
+    (o->>'instrument_name')::varchar as "instrument_name",
+    (o->>'iv')::float as "iv",
+    (o->>'liquidation')::char(3) as "liquidation",
+    (o->>'mark_price')::float as "mark_price",
+    (o->>'price')::float as "price",
+    (o->>'tick_direction')::smallint as "tick_direction",
+    to_timestamp((o->>'timestamp')::bigint/1000) as "timestamp" ,
+    (o->>'trade_id')::varchar as "trade_id",
+    (o->>'trade_seq')::integer as "trade_seq"

@@ -4,7 +4,8 @@
 date_str=`date +%Y%m%d -d '-120 day'`
 
 for table_name in deribit_book_summary_future \
-		  deribit_book_summary_options 
+		          deribit_book_summary_options \
+                  deribit_trade
 	  do 
 		  echo $table_name
 	  	  psql -U trader << SQL_DOC
