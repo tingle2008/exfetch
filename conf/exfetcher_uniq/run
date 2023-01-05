@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export HOME=/var/lib/postgresql
-. $HOME/v/.prod/local/bin/activate
+. $HOME/exfetch/.prod/local/bin/activate
 
 export PATH=$HOME/.local/bin:$PATH
 

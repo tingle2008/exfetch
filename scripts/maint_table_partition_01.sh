@@ -12,7 +12,7 @@ for table_name in binance_fut_aggtrade \
 		  coinbase_spot_ticker
 	  do 
 		  echo $table_name
-                  psql -U trader << DROP_SQL
+          psql -U trader << DROP_SQL
 drop table jumbo.${table_name}_${date_str};
 DROP_SQL
 	  	  psql -U trader << SQL_DOC
@@ -36,5 +36,5 @@ SQL_DOC
 done
 
 echo "restarting exfetcher services"
-sudo /usr/bin/svc -t /service/exfetcher*
+sudo /usr/bin/svc -t /service/exfetcher /service/exfetcher/log  /service/exfetcher_4h /service/exfetcher_4h/log
 echo "done"
