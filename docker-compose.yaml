@@ -1,0 +1,74 @@
+version: '3.5'
+
+services:
+  exfetch-binance_fut_aggtrade:
+    build:
+      context: .
+      dockerfile: Dockerfile
+        
+    container_name: binance_fut_aggtrade
+    image: exfetch
+    networks:
+      - postgres
+    command:
+      - "conf/binance_fut_aggtrade"
+  exfetch-binance_fut_all_mark_price:
+    build:
+      context: .
+      dockerfile: Dockerfile
+        
+    container_name: binance_fut_all_mark_price
+    image: exfetch
+    networks:
+      - postgres
+    command:
+      - "conf/binance_fut_all_mark_price"      
+
+  exfetch-binance_open_interest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+        
+    container_name: binance_open_interest
+    image: exfetch
+    networks:
+      - postgres
+    command:
+      - "conf/binance_fut_all_mark_price"
+  postgres:
+    container_name: pg-server
+    image: timescale/timescaledb:latest-pg15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-1234qwer!@#$}
+      PGDATA: /data/postgres
+    volumes:
+       - ./data/postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-1234qwer!@#$}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - ./data/pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
+
+# volumes:
+#     postgres:
+#     pgadmin:

@@ -1,4 +1,5 @@
 binance_fut_aggtrade:
+  intval: 30
   exchange: 'binance'
     # https://binance-docs.github.io/apidocs/futures/en/#aggregate-trade-streams
     # Only market trades will be aggregated, which means the insurance fund trades and ADL trades won't be aggregated.
