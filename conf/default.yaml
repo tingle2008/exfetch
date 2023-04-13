@@ -1,5 +1,5 @@
 dbtype: 'postgresql'
-dbhost: 'localhost'
+dbhost: 'pg-server'
 dbport: 5432
 dbuser: 'postgres'
 dbname: 'postgres'
