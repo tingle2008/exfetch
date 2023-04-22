@@ -1,3 +1,16 @@
+CREATE TABLE ts_binance_fut_aggtrade (
+  "EventTime" TIMESTAMPTZ NOT NULL,
+  "Symbol" TEXT NOT NULL,
+  "AggTradeId" BIGINT,
+  "Price" DOUBLE PRECISION,
+  "Quantity" DOUBLE PRECISION,
+  "FirstTid" BIGINT,
+  "LastTid" BIGINT,
+  "TradeTime" TIMESTAMPTZ,
+  "BMM" BOOLEAN
+) TABLESPACE pgdata;
+
+
 create table public.binance_fut_aggtrade( "EventTime" timestamp,
                                     	 "Symbol" varchar(16),
                                     	 "AggTradeId" bigint,
@@ -10,7 +23,6 @@ create table public.binance_fut_aggtrade( "EventTime" timestamp,
             partition by range ("EventTime");
 
 
--- TODO: 目前只有3个月表继承,未来如果运行时间足够长需要继续添加.            
 
 -- create table by sql string.
 select 'create table jumbo.binance_fut_aggtrade_' ||

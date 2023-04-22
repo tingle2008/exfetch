@@ -1,6 +1,4 @@
-binance_fut_aggtrade:
-  intval: 30
-  exchange: 'binance'
+ts_binance_fut_aggtrade:
     # https://binance-docs.github.io/apidocs/futures/en/#aggregate-trade-streams
     # Only market trades will be aggregated, which means the insurance fund trades and ADL trades won't be aggregated.
     # ?? where can I find ADL and insurance trade ?
@@ -22,7 +20,7 @@ binance_fut_aggtrade:
     - 'l'
     - 'T'
     - 'm'
-  dst_table: 'binance_fut_aggtrade'
+  dst_table: 'ts_binance_fut_aggtrade'
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
     o->>'s' as "Symbol",
@@ -33,3 +31,5 @@ binance_fut_aggtrade:
     (o->>'l')::bigint as "LastTid",
     to_timestamp((o->>'T')::bigint/1000)  as "TradeTime",
     (o->>'m')::bool  as "BMM"
+
+
