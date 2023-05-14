@@ -35,21 +35,7 @@ services:
       - postgres
     command:
       - "conf/binance_fut_all_mark_price"
-  postgres:
-    container_name: pg-server
-    image: timescale/timescaledb:latest-pg15
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-1234qwer!@#$}
-      PGDATA: /data/postgres
-    volumes:
-       - ./data/postgres:/data/postgres
-    ports:
-      - "5432:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
-  
+ 
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:latest

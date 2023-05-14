@@ -19,3 +19,9 @@ WARNING 30
 INFO 20
 DEBUG 10
 NOTSET 0
+
+
+## 安装:
+
+1. virutalenv .venv  && source .venv/local/bin/activate
+2. 
