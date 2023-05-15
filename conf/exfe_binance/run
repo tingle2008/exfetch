@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export HOME=/home/steam
+export HOME=/home/stream
 . $HOME/exfetch/.venv/local/bin/activate
 
 export PATH=$HOME/.local/bin:$PATH
