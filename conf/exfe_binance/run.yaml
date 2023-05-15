@@ -70,7 +70,7 @@ ts_binance_fut_mark_price:
     - 'i'
     - 'r'
     - 'T'
-  dst_table: 'binance_fut_all_mark_price'
+  dst_table: 'ts_binance_fut_all_mark_price'
   ins_sub_query: >
     to_timestamp((o->>'E')::bigint/1000) as "EventTime" ,
     o->>'s' as "Symbol",
