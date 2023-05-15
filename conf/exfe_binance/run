@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export HOME=/home/steam
+. $HOME/exfetch/.venv/local/bin/activate
+
+export PATH=$HOME/.local/bin:$PATH
+
+
+
+exec 2>&1
+exec setuidgid stream exfetch .

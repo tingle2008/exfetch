@@ -1,4 +1,4 @@
-binance_open_interest:
+ts_binance_open_interest:
   api: 'https://fapi.binance.com'
   apitype: 'rest'
   intval: 20

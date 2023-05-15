@@ -10,5 +10,12 @@ CREATE TABLE ts_binance_fut_aggtrade (
   "BMM" BOOLEAN
 ) TABLESPACE pgdata;
 
-create index binance_fut_aggtrade_etx on binance_fut_aggtrade using brin("EventTime")
+-- chunk time interval set to 1day
+SELECT create_hypertable(
+  'ts_binance_fut_aggtrade',
+  'EventTime',
+  chunk_time_interval => INTERVAL '1 day'
+);
+
+-- create index binance_fut_aggtrade_etx on binance_fut_aggtrade using brin("EventTime")
 
