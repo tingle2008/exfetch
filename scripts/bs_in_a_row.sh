@@ -8,7 +8,7 @@ with a as (SELECT
   sum("Quantity" *  (case when "BMM" then 0 else 1 end)) as "BuyQ",
   sum("Quantity" *  (case when "BMM" then 1 else 0 end)) as "SellQ",
   avg("Price") as "avgPrice"
-FROM binance_fut_aggtrade
+FROM ts_binance_fut_aggtrade
 WHERE "EventTime" > (select max("time") from public.annotations where symbol = 'btcusdt' and exchange='binance_fut') and "EventTime" < now() - interval '10m' and "Symbol" = 'BTCUSDT'  group by 1 order by 1),
 b as (select "time",
               case when "lsr" > 2 then 1 when "lsr" < 0.5 then -1 else 0 end as "lsQR",
@@ -44,7 +44,7 @@ with a as (SELECT
   sum("Quantity" *  (case when "BMM" then 0 else 1 end)) as "BuyQ",
   sum("Quantity" *  (case when "BMM" then 1 else 0 end)) as "SellQ",
   avg("Price") as "avgPrice"
-FROM binance_fut_aggtrade
+FROM ts_binance_fut_aggtrade
 WHERE "EventTime" > (select max("time") from public.annotations where symbol = 'ethusdt' and exchange='binance_fut') and "EventTime" < now() - interval '10m' and  "Symbol" = 'ETHUSDT'  group by 1 order by 1),
 b as (select "time",
               case when "lsr" > 2 then 1 when "lsr" < 0.5 then -1 else 0 end as "lsQR",

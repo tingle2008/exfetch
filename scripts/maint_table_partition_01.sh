@@ -3,10 +3,7 @@
 
 date_str=`date +%Y%m%d -d '-120 day'`
 
-for table_name in binance_fut_aggtrade \
-		  binance_fut_all_mark_price \
-		  binance_spot_aggtrade \
-		  bitmex_instrument \
+for table_name in  bitmex_instrument \
 		  bitmex_trade \
 		  bitstamp_spot \
 		  coinbase_spot_ticker
