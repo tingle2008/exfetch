@@ -138,3 +138,25 @@ deribit_trade:
     to_timestamp((o->>'timestamp')::bigint/1000) as "timestamp" ,
     (o->>'trade_id')::varchar as "trade_id",
     (o->>'trade_seq')::integer as "trade_seq"
+
+bitmex_trade:
+  loglevel: 20
+  api: 'wss://ws.bitmex.com/realtime'
+  apitype: 'wss'
+  subscribe: >
+    {"op": "subscribe", "args": ["trade:XBTUSD","trade:ETHUSD"]}
+  jdata_wanted:
+    - 'timestamp'
+    - 'side'
+    - 'size'
+    - 'price'
+    - 'grossValue'
+    - 'homeNotional'
+  ins_sub_query: >
+    (o->>'timestamp')::timestamp(0) as "tt" ,
+    o->>'symbol' as "symbol",
+    o->>'side' as "side",
+    (o->>'size')::integer as "integer",
+    (o->>'price')::float as "price",
+    (o->>'grossValue')::float as "grossValue",
+    (o->>'homeNotional')::float as "homeNotional"
