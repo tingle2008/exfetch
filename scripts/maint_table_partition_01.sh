@@ -33,5 +33,5 @@ SQL_DOC
 done
 
 echo "restarting exfetcher services"
-sudo /usr/bin/svc -t /service/exfetcher /service/exfetcher/log  /service/exfetcher_4h /service/exfetcher_4h/log
+sudo /usr/bin/svc -t /service/exfe_binance /service/exfe_binance/log  /service/exfetcher_4h /service/exfetcher_4h/log
 echo "done"
