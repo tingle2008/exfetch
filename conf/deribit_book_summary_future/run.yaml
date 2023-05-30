@@ -1,4 +1,4 @@
-deribit_book_summary_future:
+ts_deribit_book_summary_future:
   loglevel: 20
   api: 'https://www.deribit.com/api/v2/public/'
   apitype: 'rest'

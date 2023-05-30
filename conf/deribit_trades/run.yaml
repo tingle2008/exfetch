@@ -1,4 +1,4 @@
-deribit_trade:
+ts_deribit_trade:
   loglevel: 20
   api: 'wss://www.deribit.com/ws/api/v2'
   subscribe: >

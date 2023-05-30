@@ -1,8 +1,8 @@
-create table public.deribit_book_summary_options (
+create table public.ts_deribit_book_summary_options (
     "volume" float,
     "underlying_price" float,
-    "underlying_index" varchar(20),
-    "quote_currency"   varchar(8),
+    "underlying_index" text,
+    "quote_currency"   text,
     "price_change"     float,
     "open_interest"    float,
     "mid_price"        float,
@@ -10,24 +10,17 @@ create table public.deribit_book_summary_options (
     "low"              float,
     "last"             float,
     "interest_rate"    float,
-    "instrument_name"  varchar(20),
+    "instrument_name"  text,
     "high"             float,
     "estimated_delivery_price" float,
-    "creation_timestamp"    timestamp,
+    "creation_timestamp"    timestamptz not null,
     "bid_price"         float,
-    "base_currency"     varchar(8),
+    "base_currency"     text,
     "ask_price"         float
-    ) partition by range("creation_timestamp");
+    ) tablespace pgdata;
 
-select 'create table jumbo.deribit_book_summary_options_' ||
-                    extract(year from zz) ||
-   to_char(extract(month from zz),'fm00') ||
-$$ partition of public.deribit_book_summary_options for values from ('$$ ||
-                                     date(zz) ||
-                                     $$')$$   ||
-                                   $$ to ('$$ ||
-           date(date(zz) + interval '1month') ||
-                                      $$');$$
-    from
-            generate_series(date_trunc('month',to_date('20230104','yyyymmdd')),
-            date_trunc('month',to_date('20230204','yyyymmdd')),'1 month') as tt(zz);
+
+SELECT create_hypertable(
+  'ts_deribit_book_summary_options',
+  'creation_timestamp'
+);
