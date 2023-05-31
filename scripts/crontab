@@ -1,3 +1,2 @@
 55 23 * * *     /var/lib/postgresql/exfetch/scripts/maint_table_partition_01.sh >> /tmp/01.log 2>&1
-55 23 * * *     /var/lib/postgresql/exfetch/scripts/maint_table_partition_02.sh >> /tmp/02.log 2>&1
 */10 * * * *    /var/lib/postgresql/exfetch/scripts/bs_in_a_row.sh >> /tmp/f.log 2>&1
